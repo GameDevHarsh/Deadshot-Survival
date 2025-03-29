@@ -2,6 +2,9 @@
 
 Deadshot Survival is a **third-person shooter survival game** built in **Unity**. Players must survive against waves of zombies, either by eliminating all enemies or staying alive until the timer runs out. The game features **smooth shooting mechanics, intelligent enemy AI, and dynamic wave-based progression**.
 
+## 📽 Gameplay Video
+https://github.com/user-attachments/assets/7b636502-b9ad-4d22-a575-8761c1ef496e
+
 ## 🛠 Features  
 
 - 🎮 **Third-Person Shooter Mechanics** – Built with Unity’s **New Input System** for fluid movement and aiming.  
