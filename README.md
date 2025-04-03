@@ -21,3 +21,8 @@ https://github.com/user-attachments/assets/7b636502-b9ad-4d22-a575-8761c1ef496e
 2. Use **WASD** to move and **mouse** to aim and shoot.  
 3. **Survive the waves** of incoming zombies by shooting them down or avoiding attacks.  
 4. **Win by either eliminating all zombies or surviving until the timer expires**.  
+
+## Installation
+1. **Download and install** the game from https://drive.google.com/file/d/1qu0huURxxcSIWx_5mKZhl3MUe-pU9JCE/view?usp=drive_link.
+2. Run the game executable.
+3. Enjoy the immersive experience of **Deadshot Survival**!
