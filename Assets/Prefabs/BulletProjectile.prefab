@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Dir: {x: -79.03643, y: -0.96555597, z: -3.296585}
-  bulletSpeed: 2
+  bulletSpeed: 6
 --- !u!23 &-6333596515405912075
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -214,6 +214,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3612215181626742619, guid: 1660bfb399a68504da7416e4273e652d,
+        type: 3}
+      propertyPath: m_Time
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3612215181626742619, guid: 1660bfb399a68504da7416e4273e652d,
         type: 3}

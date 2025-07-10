@@ -12,7 +12,7 @@ namespace Core.Projectiles
         public static event Action<Bullet> OnBulletExpired;
         [HideInInspector]  public Vector3 Dir;
         public float bulletSpeed;
-
+        private Vector3 startPosition;
         // private IObjectPool<Bullet> bulletPool;
 
         //public void SetPool(IObjectPool<Bullet> pool)
@@ -20,16 +20,25 @@ namespace Core.Projectiles
         //    bulletPool = pool;
         //}
 
-
-        private void Start()
+        private void OnEnable()
         {
-            rigidbody = GetComponent<Rigidbody>();
-        }
+            if(rigidbody==null)
+            {
 
+            rigidbody = GetComponent<Rigidbody>();
+            }
+            rigidbody.linearVelocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+
+        }
+        public void SetStartPosition(Vector3 position)
+        {
+            startPosition = position;
+        }
         #region Triggers
         private void OnTriggerEnter(Collider other)
         {
-            GameObject effect = null;
+           // GameObject effect = null;
 
             if (other.CompareTag("Enemy") || other.CompareTag("Head"))
             {
@@ -52,15 +61,15 @@ namespace Core.Projectiles
 
         #endregion
 
-        private void Update() 
+        private void FixedUpdate() 
         {
             rigidbody.linearVelocity = Dir * bulletSpeed;
-            if (this.transform.position.z >= 100f || this.transform.position.z <= -100f)
+            float maxDistance = 50f;
+
+            if ((transform.position - startPosition).sqrMagnitude > maxDistance * maxDistance)
             {
                 OnBulletExpired?.Invoke(this);
-                //bulletPool.Release(this);
-                //Destroy(this.gameObject);
-            }    
+            }
         }
 
     }

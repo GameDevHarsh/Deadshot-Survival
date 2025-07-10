@@ -15,7 +15,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     [Space(2)]
     [SerializeField] private float normalSensivity;
     [SerializeField] private float aimSensivity;
-    [SerializeField] GameObject aimTargetPrefab;
+    [SerializeField] GameObject aimTarget;
 
     [Header("Components Inputs")]
     [SerializeField] private CinemachineVirtualCamera aimCam;
@@ -72,6 +72,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     private int currentammocount;
     private bool isReloading = false;
     private GameObject bullet;
+    private float recoilTimer = 0f;
+    private float maxRecoilTime = 0.2f; // duration of sustained shake
+    private bool isRecoiling = false;
+    private bool wasAiming = false;
+    private bool rigEnabled = false;
     #region Initialization
     private void Awake()
     {
@@ -115,6 +120,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         {
             bullet = Instantiate(bulletPrefab);
         }
+        bullet.SetActive(false);
         bullet.transform.position = spawnBulletPosition.position;
         bullet.transform.rotation = spawnBulletPosition.rotation;
         bullet.SetActive(true);
@@ -125,6 +131,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         bullet.gameObject.SetActive(false);
         bullet.transform.position = spawnBulletPosition.position;
+        bullet.transform.rotation = spawnBulletPosition.rotation;
         bullet.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         bulletPool.Enqueue(bullet.gameObject);
     }
@@ -176,11 +183,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     #region Updates & Rigidbody
     private void Update()
     {
-        if(!uiManager.isUIActive)
+        if (!uiManager.isUIActive)
         {
             HandleMouseWorldPosition();
             //set the weight of aim rig.
-            aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 10f);
+            // aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 10f);
             //assign mouse world position to the world aim target variable.
             Vector3 worldAimTarget = mouseWorldPosition;
             //we want to check only Left & Right, and not Up & Down.
@@ -190,7 +197,7 @@ public class ThirdPersonShooterController : MonoBehaviour
             //updating the text of current ammo text
             currentAmmoText.text = currentammocount.ToString("D2");
             //updating the text of current ammo text
-            totalAmmoText.text = totalAmmoCount.ToString("D3"); 
+            totalAmmoText.text = totalAmmoCount.ToString("D3");
             //checking if shoot boolean is true as well as the player has ammo and not reloading then shoots.
             if (shoot && currentammocount > 0 && !isReloading)
             {
@@ -224,29 +231,51 @@ public class ThirdPersonShooterController : MonoBehaviour
             if (aim && shoot)
             {
                 aimRig.weight = 1f;
+                rigEnabled = true;
             }
             else if (aim && !shoot)
             {
                 aimRig.weight = 1f;
+                rigEnabled = true;
             }
             else if (!aim && shoot && !isReloading)
             {
                 aimRig.weight = 1f;
-            }
-            else
-            {
-                DisableAimRig();
+                rigEnabled = true;
             }
         }
     }
     #endregion
     private void DisableAimRig()
     {
-        AimcooldownTime += Time.deltaTime;
-        if (AimcooldownTime > 10f)
+
+        if (!wasAiming)
         {
-            aimRig.weight = 0;
-            AimcooldownTime = 0;
+            if (rigEnabled)
+            {
+                AimcooldownTime += Time.deltaTime;
+                if (AimcooldownTime > 3f)
+                {
+                    aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 8f);
+                    if (aimRig.weight <= 0.01f)
+                    {
+                        AimcooldownTime = 0;
+                        rigEnabled = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (!isReloading)
+            {
+                aimRig.weight = Mathf.Lerp(aimRig.weight, aimRigWeight, Time.deltaTime * 8f);
+                if (aimRig.weight <= 0.01f)
+                {
+                    wasAiming = false;
+                    rigEnabled = false;
+                }
+            }
         }
     }
     private IEnumerator Reload()
@@ -260,7 +289,7 @@ public class ThirdPersonShooterController : MonoBehaviour
             isReloading = true;
             anim.SetTrigger("Reload");
         }
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         if (isReloading)
         {
             if (currentammocount + totalAmmoCount > magAmmoCount)
@@ -273,6 +302,7 @@ public class ThirdPersonShooterController : MonoBehaviour
                 currentammocount = currentammocount + totalAmmoCount;
                 totalAmmoCount = 0;
             }
+            
             isReloading = false;
         }
         yield return null;
@@ -284,7 +314,6 @@ public class ThirdPersonShooterController : MonoBehaviour
         if (shootcooldownTime > 0.1f)
         {
             audioSource.PlayOneShot(fireClip, 0.8f);
-            shootcooldownTime = 0;
             currentammocount--;
             Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
             muzzleFlash.Emit(10);
@@ -294,47 +323,68 @@ public class ThirdPersonShooterController : MonoBehaviour
             bullet.transform.position = spawnPos;
             bullet.transform.rotation = Quaternion.LookRotation(aimDir, Vector3.up);
             bullet.GetComponent<Bullet>().Dir = aimDir;
-           // StartCoroutine(ReturnBulletAfterTime(bullet, 3f));
+            bullet.GetComponent<Bullet>().SetStartPosition(spawnPos);
+            // StartCoroutine(ReturnBulletAfterTime(bullet, 3f));
             // Apply recoil effect
-            if (recoilCoroutine != null)
+            // Start or extend recoil
+            recoilTimer = maxRecoilTime;
+            if (!isRecoiling)
             {
-                StopCoroutine(recoilCoroutine);
+                StartCoroutine(HandleRecoil());
             }
-            recoilCoroutine = StartCoroutine(ApplyRecoil());
+            shootcooldownTime = 0;
             // Instantiate(bulletPrefab, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up), bulletPoolTransform.transform);
             // bulletPool.BulletObjectPool.Get();
         }
     }
-    private IEnumerator ApplyRecoil()
+    public void disableAimRigManually()
     {
+        if(!aim&&wasAiming)
+        {
+            aimRig.weight = 0;
+            rigEnabled = false;
+            wasAiming = false;
+        }
+       
+
+    }
+    private IEnumerator HandleRecoil()
+    {
+        isRecoiling = true;
+
+        // Set initial shake values
         if (aimCinemachineNoise != null)
         {
-            aimCinemachineNoise.m_AmplitudeGain = 1f; // Set shake intensity
-            aimCinemachineNoise.m_FrequencyGain = 2f; // Set shake speed
+            aimCinemachineNoise.m_AmplitudeGain = 1f;
+            aimCinemachineNoise.m_FrequencyGain = 2f;
         }
         if (followCinemachineNoise != null)
         {
-            followCinemachineNoise.m_AmplitudeGain = 1f; // Set shake intensity
-            followCinemachineNoise.m_FrequencyGain = 2f; // Set shake speed
+            followCinemachineNoise.m_AmplitudeGain = 1f;
+            followCinemachineNoise.m_FrequencyGain = 2f;
         }
 
-        // Push player slightly backward
-        Vector3 recoilDirection = -transform.forward * recoilForce;
-       // thirdPersonController.CharacterController.Move(recoilDirection);
+        while (recoilTimer > 0f)
+        {
+            recoilTimer -= Time.deltaTime;
+            yield return null;
+        }
 
-        yield return new WaitForSeconds(recoilDuration);
-
+        // Reset shake
         if (aimCinemachineNoise != null)
         {
-            aimCinemachineNoise.m_AmplitudeGain = 0f; // Reset shake
+            aimCinemachineNoise.m_AmplitudeGain = 0f;
             aimCinemachineNoise.m_FrequencyGain = 0f;
         }
         if (followCinemachineNoise != null)
         {
-            followCinemachineNoise.m_AmplitudeGain = 0f; // Reset shake
+            followCinemachineNoise.m_AmplitudeGain = 0f;
             followCinemachineNoise.m_FrequencyGain = 0f;
         }
+
+        isRecoiling = false;
     }
+
 
     //private IEnumerator ReturnBulletAfterTime(GameObject bullet, float delay)
     //{
@@ -352,12 +402,12 @@ public class ThirdPersonShooterController : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 999f, aimColliderLayerMask))
         {
             mouseWorldPosition = hit.point;
-            aimTargetPrefab.transform.position = hit.point;
-            if(bullet!=null)
+            aimTarget.transform.position = hit.point;
+            if (bullet != null)
             {
                 bullet.GetComponent<Bullet>().Dir = hit.point - spawnBulletPosition.position;
             }
-            if (hit.transform.CompareTag("Enemy")|| hit.transform.CompareTag("Head"))
+            if (hit.transform.CompareTag("Enemy") || hit.transform.CompareTag("Head"))
             {
                 crosshair.GetComponent<Image>().color = Color.red;
             }
@@ -373,10 +423,12 @@ public class ThirdPersonShooterController : MonoBehaviour
         aimCam.gameObject.SetActive(true);
         thirdPersonController.SetSensitivity(aimSensivity);
         playerInputs.ignoreInputs = true;
+        wasAiming = true;
     }
 
     private void StopAim()
     {
+        DisableAimRig();
         aimCam.gameObject.SetActive(false);
         thirdPersonController.SetSensitivity(normalSensivity);
         playerInputs.ignoreInputs = false;

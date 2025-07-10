@@ -19,7 +19,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -90, y: 90, z: 0}
+        value: {x: -80, y: 180, z: -80}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -91,7 +91,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 2
-        value: {x: -90, y: 90, z: 0}
+        value: {x: -80, y: 180, z: -80}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -4790,7 +4790,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -90
+        value: -80
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -4862,7 +4862,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: -90
+        value: -80
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -4883,7 +4883,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 90
+        value: 180
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -4955,7 +4955,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 90
+        value: 180
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -4976,7 +4976,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: -80
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -5048,7 +5048,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 2
-        value: 0
+        value: -80
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -8651,7 +8651,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Weapon/WeaponPivot/SM_Wep_Assault_01
+    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8663,7 +8663,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Weapon/WeaponPivot/SM_Wep_Assault_01
+    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8675,7 +8675,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Weapon/WeaponPivot/SM_Wep_Assault_01
+    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8723,7 +8723,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
+    path: Weapon/WeaponPivot/SM_Wep_Assault_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8735,7 +8735,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
+    path: Weapon/WeaponPivot/SM_Wep_Assault_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8747,7 +8747,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Armature/Hips/Spine/Spine1/Spine2/LeftShoulder/LeftArm/LeftForeArm/SM_Wep_Assault_01_Mag_01
+    path: Weapon/WeaponPivot/SM_Wep_Assault_01
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8756,6 +8756,13 @@ AnimationClip:
   m_Events:
   - time: 0.6666667
     functionName: ThrowEmptyMag
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.8333334
+    functionName: disableAimRigManually
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

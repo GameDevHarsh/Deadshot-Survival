@@ -18,7 +18,7 @@ namespace Core.Inputs
         public bool reload;
 
         public bool resetAim;
-        private bool switchToHoldMode;
+        private bool switchToHoldMode=true;
 
         [Header("Movement Settings")]
         public bool analogMovement;
@@ -101,10 +101,10 @@ namespace Core.Inputs
 
         public void OnAim(InputAction.CallbackContext context)
         {
-            callbacks.OnPlayerSwitchAimType += (type) =>
-            {
-                switchToHoldMode = type;
-            };
+            //callbacks.OnPlayerSwitchAimType += (type) =>
+            //{
+            //    switchToHoldMode = type;
+            //};
 
             if (switchToHoldMode)
             {
@@ -194,10 +194,7 @@ namespace Core.Inputs
 
         public void SetAimInputType(bool type)
         {
-            if (type == true)
-                switchToHoldMode = true;
-            else
-                switchToHoldMode = false;
+                switchToHoldMode = type;
         }
     }
 }
